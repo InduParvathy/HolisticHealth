@@ -10,5 +10,5 @@ access_logs = false
 
 # Config for .secrets.toml file
 api_secret = "348763tgibd9oeuh349hndjidvbsv"
-database_uri = ""
-sentry_dsn = ""
+database_uri = "abc"
+sentry_dsn = "abc"

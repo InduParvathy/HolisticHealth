@@ -3,6 +3,7 @@ from typing import Dict
 
 import sentry_sdk
 import uvicorn
+from dynaconf import Validator
 from fastapi import FastAPI
 from loguru import logger
 from sentry_sdk.integrations.logging import (
@@ -91,7 +92,31 @@ UVICORN_LOGGING_CONFIG = {
 
 
 if __name__ == "__main__":
+    # Register Validators
+    settings.validators.register(
+        Validator(
+            "production", "access_logs", is_type_of=bool, required=True, env="default"
+        ),
+        Validator(
+            "api_secret",
+            "database_uri",
+            "sentry_dsn",
+            is_type_of=str,
+            required=True,
+            env="default",
+        ),
+        Validator(
+            "log_level",
+            is_in=["debug", "info", "warning", "error", "critical"],
+            required=True,
+            env="default",
+        ),
+    )
+
+    # Validate Config Files
     settings.validators.validate()
+
+    # Run Internal Server
     uvicorn.run(
         "__main__:app",
         host="127.0.0.1",

@@ -15,8 +15,6 @@ import HolisticHealth
 from HolisticHealth.config import settings
 from HolisticHealth.logger import LOG_LEVEL
 
-settings.validators.validate()
-
 # Logging Config
 environment = "production" if settings.production else "development"
 sentry_sdk.init(
@@ -93,6 +91,7 @@ UVICORN_LOGGING_CONFIG = {
 
 
 if __name__ == "__main__":
+    settings.validators.validate()
     uvicorn.run(
         "__main__:app",
         host="127.0.0.1",

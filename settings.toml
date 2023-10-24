@@ -1,0 +1,3 @@
+production = false
+log_level = "debug"
+access_logs = true

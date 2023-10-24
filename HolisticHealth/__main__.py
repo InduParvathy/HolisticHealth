@@ -16,48 +16,6 @@ import HolisticHealth
 from HolisticHealth.config import settings
 from HolisticHealth.logger import LOG_LEVEL
 
-# Logging Config
-environment = "production" if settings.production else "development"
-sentry_sdk.init(
-    settings.sentry_dsn,
-    environment=environment,
-    integrations=[LoggingIntegration(level=None, event_level=None)],
-    traces_sample_rate=1.0,
-)
-logger.add(BreadcrumbHandler(level=logging.DEBUG), level=logging.DEBUG)
-logger.add(EventHandler(level=logging.ERROR), level=logging.ERROR)
-
-if environment == "production":
-    logger.add(
-        ".logs/{time}_access.log",
-        rotation="50 MB",
-        retention="15 days",
-        filter="uvicorn",
-        level=logging.DEBUG,
-    )
-    logger.add(
-        ".logs/{time}_general.log",
-        rotation="50 MB",
-        retention="15 days",
-        filter="HolisticHealth",
-        level=logging.INFO,
-    )
-else:
-    logger.add(
-        ".logs/{time}_access.log",
-        rotation="10 MB",
-        retention="2 days",
-        filter="uvicorn",
-        level=logging.DEBUG,
-    )
-    logger.add(
-        ".logs/{time}_general.log",
-        rotation="10 MB",
-        retention="2 days",
-        filter="HolisticHealth",
-        level=logging.INFO,
-    )
-
 # Create App Instance
 logger.info(f"Starting Holistic Health API: {HolisticHealth.__version__}")
 app = FastAPI()
@@ -92,6 +50,48 @@ UVICORN_LOGGING_CONFIG = {
 
 
 if __name__ == "__main__":
+    # Logging Config
+    environment = "production" if settings.production else "development"
+    sentry_sdk.init(
+        settings.sentry_dsn,
+        environment=environment,
+        integrations=[LoggingIntegration(level=None, event_level=None)],
+        traces_sample_rate=1.0,
+    )
+    logger.add(BreadcrumbHandler(level=logging.DEBUG), level=logging.DEBUG)
+    logger.add(EventHandler(level=logging.ERROR), level=logging.ERROR)
+
+    if environment == "production":
+        logger.add(
+            ".logs/{time}_access.log",
+            rotation="50 MB",
+            retention="15 days",
+            filter="uvicorn",
+            level=logging.DEBUG,
+        )
+        logger.add(
+            ".logs/{time}_general.log",
+            rotation="50 MB",
+            retention="15 days",
+            filter="HolisticHealth",
+            level=logging.INFO,
+        )
+    else:
+        logger.add(
+            ".logs/{time}_access.log",
+            rotation="10 MB",
+            retention="2 days",
+            filter="uvicorn",
+            level=logging.DEBUG,
+        )
+        logger.add(
+            ".logs/{time}_general.log",
+            rotation="10 MB",
+            retention="2 days",
+            filter="HolisticHealth",
+            level=logging.INFO,
+        )
+
     # Register Validators
     settings.validators.register(
         Validator(
